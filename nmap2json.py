@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 '''
 This script will convert a XLM nmap output file to somehow a usable Json
 It also calculate an unique MD5 hash based on any field except timestamps ones.
@@ -35,20 +36,35 @@ def hash_object(obj, exclude_keys=None):
     return hashlib.md5(obj_str.encode('utf-8')).hexdigest()
 
 def sort_dict(data):
-    """
+    '''
     Recursively sorts a nested dictionary structure by key.
     Returns a new sorted structure.
-    #TODO Still somme issues with dict in list.
-    """
+    '''
+    ignore_keys = set()
+ 
+    # Sort the dictionary by keys and recursively sort its values
     if isinstance(data, dict):
-        # Sort the dictionary by keys and recursively sort its values
-        return {k: sort_dict(data[k]) for k, v in sorted(data.items())}
+        return {
+            k: sort_dict(v)
+            for k, v in sorted(data.items())
+            if k not in ignore_keys
+        }
+    
+    # Recursively process each item in the list
     elif isinstance(data, list):
-        # Recursively process each item in the list
-        return [sort_dict(item) for item in data]
+        normalized_items = [sort_dict(item) for item in data]
+
+        if all(isinstance(i, dict) for i in normalized_items):
+            # If id Key is present, sort using that as key (for services)
+            if all("id" in d for d in normalized_items):
+                return sorted(normalized_items, key=lambda d: d["id"])
+            else:
+                # Fallback : use json dump with sorting
+                return sorted(normalized_items, key=lambda d: json.dumps(d, sort_keys=True))
+        else:
+            return normalized_items
     else:
-        # Non-dictionary, non-list values are left as-is
-        return data
+        return data # Whatever it could be.
 
 def parse_table(table):
     '''
@@ -94,9 +110,9 @@ def parse_table(table):
         return elems_without_key
 
 def map_port_and_nse(current_host):
-    """
+    '''
     Parse by port output and NSE scripts results
-    """
+    '''
     ports_data = []
     for port in current_host.findall('ports/port'):
         port_data = port.attrib
@@ -158,9 +174,9 @@ def convert_extensions_list(obj):
             convert_extensions_list(item)
 
 def nmap_xml_to_json(xml_file):
-    """
+    '''
     Parse Nmap XML report
-    """
+    '''
     tree = ET.parse(xml_file)
     root = tree.getroot()
 
