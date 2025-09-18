@@ -168,7 +168,7 @@ def nmap_xml_to_json(xml_file):
     for curr_host in root.findall('host'):
         data = {
             'addr': None, # defined to keep the uppper place in json
-            'md5': None,
+            'sha256': None,
             'starttime': curr_host.get('starttime'),
             'endtime': curr_host.get('endtime'),
             'status': {},
@@ -198,7 +198,7 @@ def nmap_xml_to_json(xml_file):
 
         # Sort data for concistent hashing.
         data = sort_dict(data)
-        data['md5'] = hash_object(data, exclude_keys=["md5", "starttime", "endtime"])
+        data['sha256'] = hash_object(data, exclude_keys=["sha256", "starttime", "endtime"])
         hosts.append(data)
     return hosts
 
