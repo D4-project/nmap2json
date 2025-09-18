@@ -1,0 +1,4 @@
+samples/ng-*
+*.json
+trash
+.venv
