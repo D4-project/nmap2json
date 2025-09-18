@@ -41,7 +41,7 @@ def sort_dict(data):
     Returns a new sorted structure.
     '''
     ignore_keys = set()
- 
+
     # Sort the dictionary by keys and recursively sort its values
     if isinstance(data, dict):
         return {
@@ -49,7 +49,7 @@ def sort_dict(data):
             for k, v in sorted(data.items())
             if k not in ignore_keys
         }
-    
+
     # Recursively process each item in the list
     elif isinstance(data, list):
         normalized_items = [sort_dict(item) for item in data]
