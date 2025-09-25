@@ -194,6 +194,17 @@ def convert_extensions_list(obj: str | dict | None):
             convert_extensions_list(item)
 
 
+def any_open_port(report: dict):
+    """
+    Set a Flag to True if any of the scanned port is up
+    """
+    result = False
+    for port in report.get("ports"):
+        if port.get("state").get("state"):
+            result = True
+    return result
+
+
 def nmap_file_to_json(xml_file: str):
     """
     Parse Nmap XML String report
@@ -248,10 +259,14 @@ def nmap_to_json(tree: ET):
         # last pass to convert __list__
         convert_extensions_list(data)
 
+        # Inject True if the host has replied on any ports.
+        data["host_reply"] = any_open_port(data)
+
         # Sort data for concistent hashing.
+        # json.dump with sorted option is not enought since
+        # we had list of dict.
         data = sort_dict(data)
-        data["sha256"] = hash_object(
-            data, exclude_keys=["sha256", "starttime", "endtime"]
-        )
+        data["sha256"] = hash_object(data, exclude_keys=["starttime", "endtime"])
+
         hosts.append(data)
     return hosts

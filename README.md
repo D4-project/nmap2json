@@ -3,7 +3,19 @@
 ## Description 
 nmap2json is a simple python library to convert nmap xml output to python object dumpable in json.
 
-It provides also the tool nmapconvert.py where you may save the json as array or, per ip, or send it to the direct output.
+It could be also used in command line if you want to save the json as array or, per ip, or send it to the direct output.
+
+## Additionnal fields
+nmap2json add two fields per object.
+```
+...
+"host_reply": true,
+"sha256": "446c094a24f248da6a87cc7bffaae3df9cf5b0dc5a07d1ca7fff8cdb2071b389",
+...
+```
+host_reply is set to true if any of the scanned port of the host is up.
+sha256 is the hash of the whole object excluding the fields "starttime" and "endtime"
+
 
 ## Example
 
@@ -19,7 +31,8 @@ you could simply output the results as a json object.
 
 
 ```bash
-usage: nmapconvert.py [-h] -i INPUT [-o OUTPUT] [-m]
+$ python -m nmap2json -h
+usage: __main__.py [-h] -i INPUT [-o OUTPUT] [-m]
 
 Convert Nmap XML to JSON
 
