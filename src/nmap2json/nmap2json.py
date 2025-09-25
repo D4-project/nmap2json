@@ -173,13 +173,24 @@ def convert_extensions_list(obj):
         for item in obj:
             convert_extensions_list(item)
 
+def nmap_file_to_json(xml_file):
+    '''
+    Parse Nmap XML String report
+    '''
+    tree = ET.parse(xml_file)
+    root = tree.getroot()
+    return(nmap_to_json(root))
+
 def nmap_xml_to_json(xml_file):
     '''
-    Parse Nmap XML report
+    Parse Nmap XML File report
     '''
     tree = ET.parse(xml_file)
     root = tree.getroot()
 
+    return(nmap_to_json(root))
+
+def nmap_to_json(root):
     hosts = []
     for curr_host in root.findall('host'):
         data = {

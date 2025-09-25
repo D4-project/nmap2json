@@ -1,0 +1,23 @@
+[project]
+name = "nmap2json"
+version = "0.0.0"
+authors = [
+  { name="Paul Jung", email="paul.jung@circl.lu" },
+]
+description = "A nmap xml output to json converter"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "GNU AFFERO v3"
+license-files = ["LICENCE"]
+
+[project.urls]
+Homepage = "https://github.com/D4-project/nmap2json"
+Issues = "https://github.com/D4-project/nmap2json/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
