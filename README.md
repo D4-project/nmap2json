@@ -13,7 +13,7 @@ Usage is simple; after running a nmap scan using export into XML file, for examp
 
 you could simply output the results as a json object.
 
->$ python nmapconvert.py -i myoutput.xml
+>$ python -m nmap2json -i myoutput.xml
 
 ## Help
 
@@ -34,7 +34,7 @@ options:
 ```
 
 ## Requirements
- - Python >= 3.9
+ - Python >= 3.10
 
 ## Library usage 
 

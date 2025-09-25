@@ -7,3 +7,4 @@ The library provides,
 """
 
 from .nmap2json import nmap_file_to_json, nmap_xml_to_json
+
