@@ -10,17 +10,15 @@ The library provides,
     load a xml file and convert it into a python object.
     The input str is a string with the file path.
     nmap_xfl_to_json(str)
-    load a xml from a string anc converti it into a python object.
+    load a xml from a string and convert it into a python object.
 
 """
-import os
 import xml.etree.ElementTree as ET
 import json
-import argparse
 import hashlib
 
 
-def filter_keys(obj, exclude_keys):
+def filter_keys(obj: dict | list, exclude_keys: list):
     """
     Recursively filter out specified keys from dictionaries and lists
     Used before hashing.
@@ -37,21 +35,23 @@ def filter_keys(obj, exclude_keys):
         return obj
 
 
-def hash_object(obj, exclude_keys=None):
+def hash_object(obj: dict, exclude_keys=None):
     """
-    Generate md5 of result.
+    Generate sha256 of result.
     """
+
     exclude_keys = exclude_keys or []
     filtered = filter_keys(obj, exclude_keys)
     obj_str = json.dumps(filtered)  # , sort_keys=True) # keysorting
-    return hashlib.md5(obj_str.encode("utf-8")).hexdigest()
+    return hashlib.sha256(obj_str.encode("utf-8")).hexdigest()
 
 
-def sort_dict(data):
+def sort_dict(data: str | dict):
     """
     Recursively sorts a nested dictionary structure by key.
     Returns a new sorted structure.
     """
+
     ignore_keys = set()
 
     # Sort the dictionary by keys and recursively sort its values
@@ -79,12 +79,13 @@ def sort_dict(data):
         return data  # Whatever it could be.
 
 
-def parse_table(table):
+def parse_table(table: ET.Element):
     """
     Parse a <table> recursively.
     Returns a dict if elems have keys or nested tables,
     otherwise returns a list for simple elem-only tables.
     """
+
     elems_with_key = {}
     elems_without_key = []
 
@@ -123,10 +124,11 @@ def parse_table(table):
         return elems_without_key
 
 
-def map_port_and_nse(current_host):
+def map_port_and_nse(current_host: ET.Element):
     """
     Parse by port output and NSE scripts results
     """
+
     ports_data = []
     for port in current_host.findall("ports/port"):
         port_data = port.attrib
@@ -167,11 +169,12 @@ def map_port_and_nse(current_host):
     return ports_data
 
 
-def convert_extensions_list(obj):
+def convert_extensions_list(obj: str | dict | None):
     """
     This function will replace __list__ multiple list previousely created
     to named dict.
     """
+
     if isinstance(obj, dict):
         for key, value in list(obj.items()):
             if key == "extensions" and isinstance(value, dict) and "__list__" in value:
@@ -191,7 +194,7 @@ def convert_extensions_list(obj):
             convert_extensions_list(item)
 
 
-def nmap_file_to_json(xml_file):
+def nmap_file_to_json(xml_file: str):
     """
     Parse Nmap XML String report
     """
@@ -199,7 +202,7 @@ def nmap_file_to_json(xml_file):
     return nmap_to_json(tree)
 
 
-def nmap_xml_to_json(xml_file):
+def nmap_xml_to_json(xml_file: str):
     """
     Parse Nmap XML File report
     """
@@ -207,7 +210,7 @@ def nmap_xml_to_json(xml_file):
     return nmap_to_json(tree)
 
 
-def nmap_to_json(tree):
+def nmap_to_json(tree: ET):
     """
     This is the main parsing function
     """
@@ -252,42 +255,3 @@ def nmap_to_json(tree):
         )
         hosts.append(data)
     return hosts
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert Nmap XML to JSON")
-    parser.add_argument("-i", "--input", required=True, help="Input Nmap XML file")
-    parser.add_argument(
-        "-o", "--output", help="Output JSON file (prints to stdout if omitted)"
-    )
-    parser.add_argument(
-        "-m",
-        "--multiple",
-        action="store_true",
-        help="Enable multiple JSON outputs (IP prefixed)",
-    )
-    args = parser.parse_args()
-
-    result = nmap_xml_to_json(args.input)
-
-    if args.output:
-        if args.multiple:
-            i = 0
-            for host in result:
-                i += 1
-                filename = os.path.splitext(args.output)[
-                    0
-                ]  # split on name to get it without ext.
-                if host["addr"]:
-                    OUTFILE = f"{host['addr']}_{filename}.json"
-                else:
-                    OUTFILE = f"NOIP_{filename}_NOIP_{i}.json"
-                with open(OUTFILE, "w", encoding="utf-8") as f:
-                    json.dump(host, f, indent=2)
-                print(f"{i} JSON generated: {OUTFILE}")
-        else:
-            with open(args.output, "w", encoding="utf-8") as f:
-                json.dump(result, f, indent=2)
-            print(f"JSON generated: {args.output}")
-    else:
-        print(json.dumps(result, indent=2))
