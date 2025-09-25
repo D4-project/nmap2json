@@ -24,3 +24,6 @@ Tracker = "https://github.com/D4-project/nmap2json/issues"
 [project.readme]
 file = "README.md"
 content-type = "text/markdown"
+
+[project.scripts]
+nmap2json = 'nmap2json:main'

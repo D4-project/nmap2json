@@ -1,0 +1,170 @@
+[
+  {
+    "addr": "185.194.93.14",
+    "endtime": "1758092817",
+    "host_reply": true,
+    "hostnames": [
+      {
+        "name": "cpab.circl.lu",
+        "type": "PTR"
+      },
+      {
+        "name": "www.circl.lu",
+        "type": "user"
+      }
+    ],
+    "ports": [
+      {
+        "portid": "22",
+        "protocol": "tcp",
+        "service": {
+          "conf": "3",
+          "method": "table",
+          "name": "ssh"
+        },
+        "state": {
+          "reason": "no-response",
+          "reason_ttl": "0",
+          "state": "filtered"
+        }
+      },
+      {
+        "portid": "443",
+        "protocol": "tcp",
+        "scripts": [
+          {
+            "id": "http-favicon",
+            "output": "Unknown favicon MD5: 55ED74948D924396C15D54EFE07414C1"
+          },
+          {
+            "Supported Methods": [
+              "GET",
+              "HEAD",
+              "POST",
+              "OPTIONS"
+            ],
+            "id": "http-methods",
+            "output": "\n  Supported Methods: GET HEAD POST OPTIONS"
+          },
+          {
+            "elems": [
+              "Apache"
+            ],
+            "id": "http-server-header",
+            "output": "Apache"
+          },
+          {
+            "id": "http-title",
+            "output": "CIRCL \\xC2\\xBB CIRCL -- Computer Incident Response Center Luxembourg...",
+            "title": "CIRCL \\xC2\\xBB CIRCL -- Computer Incident Response Center Luxembourg -- CSIRT -- CERT"
+          },
+          {
+            "extensions": {
+              "Authority Information Access": "OCSP - URI:http://ocsp.digicert.com\nCA Issuers - URI:http://cacerts.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1-1.crt",
+              "CT Precertificate SCTs": "Signed Certificate Timestamp:\n    Version   : v1 (0x0)\n    Log ID    : 96:97:64:BF:55:58:97:AD:F7:43:87:68:37:08:42:77:\n                E9:F0:3A:D5:F6:A4:F3:36:6E:46:A4:3F:0F:CA:A9:C6\n    Timestamp : Apr 17 13:34:00.724 2025 GMT\n    Extensions: none\n    Signature : ecdsa-with-SHA256\n                30:46:02:21:00:DA:B4:EE:50:61:68:1B:DF:2A:B7:C8:\n                C3:93:DB:2E:2D:63:88:D7:36:BC:38:78:EC:B0:3E:C8:\n                94:FD:07:37:81:02:21:00:EA:C6:A2:EF:4E:54:2B:AA:\n                37:37:CA:2E:36:E9:6F:CC:DB:76:9E:13:9B:85:EE:3B:\n                91:F9:FB:31:94:05:CA:23\nSigned Certificate Timestamp:\n    Version   : v1 (0x0)\n    Log ID    : 49:9C:9B:69:DE:1D:7C:EC:FC:36:DE:CD:87:64:A6:B8:\n                5B:AF:0A:87:80:19:D1:55:52:FB:E9:EB:29:DD:F8:C3\n    Timestamp : Apr 17 13:34:00.726 2025 GMT\n    Extensions: none\n    Signature : ecdsa-with-SHA256\n                30:44:02:20:6E:3B:12:23:04:29:48:0F:66:46:40:E1:\n                6A:2E:72:38:30:77:3A:1E:58:A7:1C:B5:53:D1:5B:18:\n                8F:91:F7:9F:02:20:62:3C:B0:85:CB:37:FA:2A:7D:6B:\n                82:0D:08:3F:4C:4C:08:AD:22:BC:F2:66:5D:77:9F:34:\n                AF:4D:A9:CF:0F:10\nSigned Certificate Timestamp:\n    Version   : v1 (0x0)\n    Log ID    : CB:38:F7:15:89:7C:84:A1:44:5F:5B:C1:DD:FB:C9:6E:\n                F2:9A:59:CD:47:0A:69:05:85:B0:CB:14:C3:14:58:E7\n    Timestamp : Apr 17 13:34:00.675 2025 GMT\n    Extensions: none\n    Signature : ecdsa-with-SHA256\n                30:45:02:21:00:B1:EE:C5:88:44:F8:68:38:60:C5:70:\n                0D:EE:0C:1D:08:D8:70:AD:F3:A2:DC:78:A1:43:24:7B:\n                ED:2F:30:4B:21:02:20:61:93:B4:6B:25:67:D2:F0:16:\n                F0:AE:71:C7:2F:13:D5:0E:F7:77:AE:E7:E8:7A:C7:F7:\n                5D:E1:DB:95:48:82:86",
+              "X509v3 Authority Key Identifier": "74:85:80:C0:66:C7:DF:37:DE:CF:BD:29:37:AA:03:1D:BE:ED:CD:17",
+              "X509v3 Basic Constraints": "CA:FALSE",
+              "X509v3 Basic Constraints critical": "true",
+              "X509v3 CRL Distribution Points": "Full Name:\n  URI:http://crl3.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1-1.crl\nFull Name:\n  URI:http://crl4.digicert.com/DigiCertGlobalG2TLSRSASHA2562020CA1-1.crl",
+              "X509v3 Certificate Policies": "Policy: 2.23.140.1.2.2\n  CPS: http://www.digicert.com/CPS",
+              "X509v3 Extended Key Usage": "TLS Web Server Authentication, TLS Web Client Authentication",
+              "X509v3 Key Usage": "Digital Signature, Key Encipherment",
+              "X509v3 Key Usage critical": "true",
+              "X509v3 Subject Alternative Name": "DNS:*.circl.lu, DNS:circl.lu",
+              "X509v3 Subject Key Identifier": "00:E6:DB:C7:57:06:C3:87:C2:EB:C7:63:35:5D:B8:D8:8A:88:BF:19"
+            },
+            "id": "ssl-cert",
+            "issuer": {
+              "commonName": "DigiCert Global G2 TLS RSA SHA256 2020 CA1",
+              "countryName": "US",
+              "organizationName": "DigiCert Inc"
+            },
+            "md5": "aa94324c0c71170024f1a8a3e8cfdb09",
+            "output": "Subject: commonName=*.circl.lu/organizationName=Luxembourg House of Cybersecurity G.I.E./countryName=LU\nSubject Alternative Name: DNS:*.circl.lu, DNS:circl.lu\nIssuer: commonName=DigiCert Global G2 TLS RSA SHA256 2020 CA1/organizationName=DigiCert Inc/countryName=US\nPublic Key type: rsa\nPublic Key bits: 2048\nSignature Algorithm: sha256WithRSAEncryption\nNot valid before: 2025-04-17T00:00:00\nNot valid after:  2026-05-18T23:59:59\nMD5:   aa94:324c:0c71:1700:24f1:a8a3:e8cf:db09\nSHA-1: ce11:d981:9816:6fd7:60b2:a391:ec24:114b:42c6:de58",
+            "pem": "-----BEGIN CERTIFICATE-----\nMIIG5DCCBcygAwIBAgIQCxbF63LjwkH9M6xYQgAGIzANBgkqhkiG9w0BAQsFADBZ\nMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMTMwMQYDVQQDEypE\naWdpQ2VydCBHbG9iYWwgRzIgVExTIFJTQSBTSEEyNTYgMjAyMCBDQTEwHhcNMjUw\nNDE3MDAwMDAwWhcNMjYwNTE4MjM1OTU5WjBvMQswCQYDVQQGEwJMVTEYMBYGA1UE\nBxMPTHV4ZW1ib3VyZyBDaXR5MTEwLwYDVQQKEyhMdXhlbWJvdXJnIEhvdXNlIG9m\nIEN5YmVyc2VjdXJpdHkgRy5JLkUuMRMwEQYDVQQDDAoqLmNpcmNsLmx1MIIBIjAN\nBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxz3/zFNOHvtC+mPLDijDlSCq0Yqh\nwLds5ul4+4hEi2xfr47RKMUOZRY8ow0CIXgFnPIgrtGMZl1DUDUl4O0FCQUFsABZ\npY5OubxRvE5/iSTv9AcaXFbrDl1VRV7NdNO+tvUPwOVZni4GiCElHZNSa9UvfOk/\njOyZxAVufoxiru5hP5GOftnVhw6tdw9DpCN91dx1qDI4wWwMRlYlt7KrVN2DnlcV\nMgCrcOoAlzbE10Do6mrEdJ50F5OnuPSsWPMTUFLRUlZwj3o3nnB2fNsp2jQlXDE3\ni2d0/H/rVexRs0SVPlKmu1/cjZWO4xf6YqpfvuGmSRLiOJnCaFI6c1PlyQIDAQAB\no4IDkDCCA4wwHwYDVR0jBBgwFoAUdIWAwGbH3zfez70pN6oDHb7tzRcwHQYDVR0O\nBBYEFADm28dXBsOHwuvHYzVduNiKiL8ZMB8GA1UdEQQYMBaCCiouY2lyY2wubHWC\nCGNpcmNsLmx1MD4GA1UdIAQ3MDUwMwYGZ4EMAQICMCkwJwYIKwYBBQUHAgEWG2h0\ndHA6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0l\nBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMIGfBgNVHR8EgZcwgZQwSKBGoESGQmh0\ndHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEdsb2JhbEcyVExTUlNBU0hB\nMjU2MjAyMENBMS0xLmNybDBIoEagRIZCaHR0cDovL2NybDQuZGlnaWNlcnQuY29t\nL0RpZ2lDZXJ0R2xvYmFsRzJUTFNSU0FTSEEyNTYyMDIwQ0ExLTEuY3JsMIGHBggr\nBgEFBQcBAQR7MHkwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNv\nbTBRBggrBgEFBQcwAoZFaHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL0RpZ2lD\nZXJ0R2xvYmFsRzJUTFNSU0FTSEEyNTYyMDIwQ0ExLTEuY3J0MAwGA1UdEwEB/wQC\nMAAwggF+BgorBgEEAdZ5AgQCBIIBbgSCAWoBaAB3AJaXZL9VWJet90OHaDcIQnfp\n8DrV9qTzNm5GpD8PyqnGAAABlkP01BQAAAQDAEgwRgIhANq07lBhaBvfKrfIw5Pb\nLi1jiNc2vDh47LA+yJT9BzeBAiEA6sai705UK6o3N8ouNulvzNt2nhObhe47kfn7\nMZQFyiMAdQBJnJtp3h187Pw23s2HZKa4W68Kh4AZ0VVS++nrKd34wwAAAZZD9NQW\nAAAEAwBGMEQCIG47EiMEKUgPZkZA4WoucjgwdzoeWKcctVPRWxiPkfefAiBiPLCF\nyzf6Kn1rgg0IP0xMCK0ivPJmXXefNK9Nqc8PEAB2AMs49xWJfIShRF9bwd37yW7y\nmlnNRwppBYWwyxTDFFjnAAABlkP00+MAAAQDAEcwRQIhALHuxYhE+Gg4YMVwDe4M\nHQjYcK3zotx4oUMke+0vMEshAiBhk7RrJWfS8BbwrnHHLxPVDvd3rufoesf3XeHb\nlUiChjANBgkqhkiG9w0BAQsFAAOCAQEAJOeTddmxHPz2Hlc+ZpK/hM/UI8A+NWFY\nAgsN/wpGWnxTO1NJqDYxxnU/vib0jM1O6eeroGRSaQ6p2MGt6lWtHtZOpq0Gevu6\n36PHuCZ3qw08h4oxLqB1asc7aimBM62oRh6VGiPdvqEgupK13/YsLXP9yyY6osin\nVpHHudy4JNl4zulp8T/uFn/rPJKReTTwbTRgW5zhaD7snJZ6S6rKGVFfQGITqNVY\ngiQNNPpwOXy+5YtE60QfpxBxJ/m3OB5ZUCcD384I9mMVXQTyquTi+Gxa5GYf0csM\nWGXXDhK6YVR+Beettf0kxJKexFvyBLzP87UdWmXRhtKWqaiogrOB6Q==\n-----END CERTIFICATE-----\n",
+            "pubkey": {
+              "bits": "2048",
+              "exponent": "65537",
+              "modulus": "C73DFFCC534E1EFB42FA63CB0E28C39520AAD18AA1C0B76CE6E978FB88448B6C5FAF8ED128C50E65163CA30D022178059CF220AED18C665D43503525E0ED05090505B00059A58E4EB9BC51BC4E7F8924EFF4071A5C56EB0E5D55455ECD74D3BEB6F50FC0E5599E2E068821251D93526BD52F7CE93F8CEC99C4056E7E8C62AEEE613F918E7ED9D5870EAD770F43A4237DD5DC75A83238C16C0C465625B7B2AB54DD839E57153200AB70EA009736C4D740E8EA6AC4749E741793A7B8F4AC58F3135052D15256708F7A379E70767CDB29DA34255C31378B6774FC7FEB55EC51B344953E52A6BB5FDC8D958EE317FA62AA5FBEE1A64912E23899C268523A7353E5C9",
+              "type": "rsa"
+            },
+            "sha1": "ce11d98198166fd760b2a391ec24114b42c6de58",
+            "sig_algo": "sha256WithRSAEncryption",
+            "subject": {
+              "commonName": "*.circl.lu",
+              "countryName": "LU",
+              "localityName": "Luxembourg City",
+              "organizationName": "Luxembourg House of Cybersecurity G.I.E."
+            },
+            "validity": {
+              "notAfter": "2026-05-18T23:59:59",
+              "notBefore": "2025-04-17T00:00:00"
+            }
+          },
+          {
+            "id": "ssl-date",
+            "output": "TLS randomness does not represent time"
+          }
+        ],
+        "service": {
+          "conf": "10",
+          "method": "probed",
+          "name": "http",
+          "product": "Apache httpd",
+          "tunnel": "ssl"
+        },
+        "state": {
+          "reason": "syn-ack",
+          "reason_ttl": "0",
+          "state": "open"
+        }
+      },
+      {
+        "portid": "80",
+        "protocol": "tcp",
+        "scripts": [
+          {
+            "Supported Methods": [
+              "GET",
+              "HEAD",
+              "POST",
+              "OPTIONS"
+            ],
+            "id": "http-methods",
+            "output": "\n  Supported Methods: GET HEAD POST OPTIONS"
+          },
+          {
+            "elems": [
+              "Apache"
+            ],
+            "id": "http-server-header",
+            "output": "Apache"
+          },
+          {
+            "id": "http-title",
+            "output": "Did not follow redirect to https://www.circl.lu/",
+            "redirect_url": "https://www.circl.lu/"
+          }
+        ],
+        "service": {
+          "conf": "10",
+          "method": "probed",
+          "name": "http",
+          "product": "Apache httpd"
+        },
+        "state": {
+          "reason": "syn-ack",
+          "reason_ttl": "0",
+          "state": "open"
+        }
+      }
+    ],
+    "sha256": "79562e2e2144f90a3739b396474d20be2ccf9a9b08470c3dc08fbc86c86f96ab",
+    "starttime": "1758092798",
+    "status": {
+      "reason": "user-set",
+      "reason_ttl": "0",
+      "state": "up"
+    }
+  }
+]
