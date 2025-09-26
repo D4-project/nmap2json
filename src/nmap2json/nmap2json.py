@@ -200,7 +200,7 @@ def any_open_port(report: dict):
     """
     result = False
     for port in report.get("ports"):
-        if port.get("state").get("state"):
+        if port.get("state").get("state") == "open":
             result = True
     return result
 
