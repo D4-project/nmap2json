@@ -182,7 +182,7 @@ def convert_extensions_list(obj: str | dict | None):
                 new_ext = {}
                 for item in value["__list__"]:
                     name = item["name"]
-                    val = item["value"]
+                    val = item.get("value", "") # somes Items are really empty.
                     new_ext[name] = val
                     if "critical" in item:
                         new_ext[f"{name} critical"] = item["critical"]
