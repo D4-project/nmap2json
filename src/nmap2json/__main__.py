@@ -24,9 +24,20 @@ if __name__ == "__main__":
         action="store_true",
         help="Enable multiple JSON outputs (IP prefixed)",
     )
+    parser.add_argument(
+        "-n",
+        "--notopen",
+        action="store_true",
+        help="Remove from output closed ports",
+    )
+    parser.add_argument(
+        "-d",
+        "--deadhost",
+        action="store_true",
+        help="Remove from output dead hosts",
+    )
     args = parser.parse_args()
-
-    result = nmap_file_to_json(args.input)
+    result = nmap_file_to_json(args.input, args.notopen, args.deadhost)
 
     if args.output:
         if args.multiple:

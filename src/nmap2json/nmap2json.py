@@ -205,23 +205,23 @@ def any_open_port(report: dict):
     return result
 
 
-def nmap_file_to_json(xml_file: str):
+def nmap_file_to_json(xml_file: str, wipe_notopen = False: bool, wipe_deadhost = False: bool): -> dict
     """
     Parse Nmap XML String report
     """
     tree = ET.parse(xml_file)
-    return nmap_to_json(tree)
+    return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
 
 
-def nmap_xml_to_json(xml_file: str):
+def nmap_xml_to_json(xml_file: str, wipe_notopen = False: bool, wipe_deadhost = False: bool): -> dict
     """
     Parse Nmap XML File report
     """
     tree = ET.fromstring(xml_file)
-    return nmap_to_json(tree)
+    return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
 
 
-def nmap_to_json(tree: ET):
+def nmap_to_json(tree: ET, wipe_notopen = False : bool, wipe_deadhost = False: bool): -> dict
     """
     This is the main parsing function
     """
@@ -262,11 +262,25 @@ def nmap_to_json(tree: ET):
         # Inject True if the host has replied on any ports.
         data["host_reply"] = any_open_port(data)
 
+        # If required cleanup non open ports.
+        if wipe_notopen:
+            copy_data = data.copy()
+            copy_data["ports"] = []  # Wipe out the port section.
+            if data["ports"]:
+                for port in data["ports"]:
+                    if port.get("state").get("state") == "open":
+                        copy_data["ports"].append(port)
+            data = copy_data
+
         # Sort data for concistent hashing.
         # json.dump with sorted option is not enought since
         # we had list of dict.
         data = sort_dict(data)
         data["sha256"] = hash_object(data, exclude_keys=["starttime", "endtime"])
 
-        hosts.append(data)
+        # If required cleanup dead host.
+        if wipe_deadhost:
+            if data["host_reply"]:
+                hosts.append(data)
+
     return hosts
