@@ -182,7 +182,7 @@ def convert_extensions_list(obj: str | dict | None):
                 new_ext = {}
                 for item in value["__list__"]:
                     name = item["name"]
-                    val = item.get("value", "") # somes Items are really empty.
+                    val = item.get("value", "")  # somes Items are really empty.
                     new_ext[name] = val
                     if "critical" in item:
                         new_ext[f"{name} critical"] = item["critical"]
@@ -205,7 +205,9 @@ def any_open_port(report: dict):
     return result
 
 
-def nmap_file_to_json(xml_file: str, wipe_notopen = False: bool, wipe_deadhost = False: bool): -> dict
+def nmap_file_to_json(
+    xml_file: str, wipe_notopen: bool = False, wipe_deadhost: bool = False
+) -> dict:
     """
     Parse Nmap XML String report
     """
@@ -213,7 +215,9 @@ def nmap_file_to_json(xml_file: str, wipe_notopen = False: bool, wipe_deadhost =
     return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
 
 
-def nmap_xml_to_json(xml_file: str, wipe_notopen = False: bool, wipe_deadhost = False: bool): -> dict
+def nmap_xml_to_json(
+    xml_file: str, wipe_notopen: bool = False, wipe_deadhost: bool = False
+) -> dict:
     """
     Parse Nmap XML File report
     """
@@ -221,7 +225,9 @@ def nmap_xml_to_json(xml_file: str, wipe_notopen = False: bool, wipe_deadhost = 
     return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
 
 
-def nmap_to_json(tree: ET, wipe_notopen = False : bool, wipe_deadhost = False: bool): -> dict
+def nmap_to_json(
+    tree: ET, wipe_notopen: bool = False, wipe_deadhost: bool = False
+) -> dict:
     """
     This is the main parsing function
     """
@@ -279,8 +285,10 @@ def nmap_to_json(tree: ET, wipe_notopen = False : bool, wipe_deadhost = False: b
         data["sha256"] = hash_object(data, exclude_keys=["starttime", "endtime"])
 
         # If required cleanup dead host.
-        if wipe_deadhost:
-            if data["host_reply"]:
+        if wipe_deadhost is True:
+            if data["host_reply"] is True:
                 hosts.append(data)
+        else:
+            hosts.append(data)
 
     return hosts

@@ -43,7 +43,8 @@ options:
   -o OUTPUT, --output OUTPUT
                         Output JSON file (prints to stdout if omitted)
   -m, --multiple        Enable multiple JSON outputs (IP prefixed)
-
+  -n, --notopen         Remove from output closed ports
+  -d, --deadhost        Remove from output dead hosts
 ```
 
 ## Requirements
