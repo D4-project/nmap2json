@@ -15,35 +15,7 @@ The library provides,
 """
 import xml.etree.ElementTree as ET
 import json
-import hashlib
-
-
-def filter_keys(obj: dict | list, exclude_keys: list):
-    """
-    Recursively filter out specified keys from dictionaries and lists
-    Used before hashing.
-    """
-    if isinstance(obj, dict):
-        return {
-            k: filter_keys(v, exclude_keys)
-            for k, v in obj.items()
-            if k not in exclude_keys
-        }
-    elif isinstance(obj, list):
-        return [filter_keys(i, exclude_keys) for i in obj]
-    else:
-        return obj
-
-
-def hash_object(obj: dict, exclude_keys=None):
-    """
-    Generate sha256 of result.
-    """
-
-    exclude_keys = exclude_keys or []
-    filtered = filter_keys(obj, exclude_keys)
-    obj_str = json.dumps(filtered)  # , sort_keys=True) # keysorting
-    return hashlib.sha256(obj_str.encode("utf-8")).hexdigest()
+from .smarthash import headers_smart_hash
 
 
 def sort_dict(data: str | dict):
@@ -237,7 +209,7 @@ def nmap_to_json(
     for curr_host in root.findall("host"):
         data = {
             "addr": None,  # defined to keep the uppper place in json
-            "sha256": None,
+            "hsh256": None,
             "starttime": curr_host.get("starttime"),
             "endtime": curr_host.get("endtime"),
             "status": {},
@@ -282,8 +254,9 @@ def nmap_to_json(
         # json.dump with sorted option is not enought since
         # we had list of dict.
         data = sort_dict(data)
-        data["sha256"] = hash_object(data, exclude_keys=["starttime", "endtime"])
-
+        data["hsh256"] = headers_smart_hash(
+            data, exclude_keys=["starttime", "endtime", "hsh256"]
+        )
         # If required cleanup dead host.
         if wipe_deadhost is True:
             if data["host_reply"] is True:

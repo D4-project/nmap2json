@@ -36,6 +36,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Remove from output dead hosts",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Export with smarthash masking",
+    )
+
     args = parser.parse_args()
     result = nmap_file_to_json(args.input, args.notopen, args.deadhost)
 

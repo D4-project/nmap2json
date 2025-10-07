@@ -13,6 +13,7 @@
         "type": "user"
       }
     ],
+    "hsh256": "446c094a24f248da6a87cc7bffaae3df9cf5b0dc5a07d1ca7fff8cdb2071b389",
     "ports": [
       {
         "portid": "22",
@@ -159,7 +160,6 @@
         }
       }
     ],
-    "sha256": "79562e2e2144f90a3739b396474d20be2ccf9a9b08470c3dc08fbc86c86f96ab",
     "starttime": "1758092798",
     "status": {
       "reason": "user-set",
