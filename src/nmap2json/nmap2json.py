@@ -15,7 +15,7 @@ The library provides,
 """
 import xml.etree.ElementTree as ET
 import json
-from .smarthash import headers_smart_hash
+from .smarthash import headers_smart_hash, port_smart_hash
 
 
 def sort_dict(data: str | dict):
@@ -177,6 +177,28 @@ def any_open_port(report: dict):
     return result
 
 
+def add_port_hashes(ports: list):
+    """
+    Add a smart hash for each port after the portid key.
+    """
+    result = []
+    for port in ports:
+        port_hash = port_smart_hash(port, exclude_keys=["hsh256"])
+        hashed_port = {}
+        hash_inserted = False
+        for key, value in port.items():
+            if key == "hsh256":
+                continue
+            hashed_port[key] = value
+            if key == "portid":
+                hashed_port["hsh256"] = port_hash
+                hash_inserted = True
+        if not hash_inserted:
+            hashed_port["hsh256"] = port_hash
+        result.append(hashed_port)
+    return result
+
+
 def nmap_file_to_json(
     xml_file: str, wipe_notopen: bool = False, wipe_deadhost: bool = False
 ) -> dict:
@@ -254,6 +276,7 @@ def nmap_to_json(
         # json.dump with sorted option is not enought since
         # we had list of dict.
         data = sort_dict(data)
+        data["ports"] = add_port_hashes(data["ports"])
         data["hsh256"] = headers_smart_hash(
             data, exclude_keys=["starttime", "endtime", "hsh256"]
         )
