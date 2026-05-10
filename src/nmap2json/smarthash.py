@@ -24,17 +24,24 @@ import re
 
 # Headers where cleanup may occuers.
 HEADERS_TOCLEAN = [
-    "ETag",
     "CF-Ray",
-    "Via",
-    "X-Amz-Cf-Id",
     "content-security-policy-report-only",
-    "www-authenticate",
+    "ETag",
     "request-id",
+    "Via",
+    "www-authenticate",
+    "X-Amz-Cf-Id",
+    "x-amz-id-2",
+    "x-amz-request-id",
+    "x-gitlab-meta",
+    "x-iplb-instance",
+    "x-iplb-request-id",
+    "x-ntap-sg-trace-id",
     "x-request-id",
     "x-runtime",
-    "x-gitlab-meta",
 ]
+
+SMART_HASH_SCRIPTS = ["http-headers", "http-security-headers"]
 
 
 def filter_keys(obj: dict | list, exclude_keys: list):
@@ -60,12 +67,21 @@ def headers_smart_hash(obj: dict, exclude_keys=None):
     """
     exclude_keys = exclude_keys or []
     filtered = filter_keys(obj, exclude_keys)  # Remove some fiels from report
-    filtered = master_clean(
-        filtered, ["http-headers", "http-security-headers"]
-    )  # Heaving filtering out.
+    filtered = master_clean(filtered, SMART_HASH_SCRIPTS)  # Heaving filtering out.
     obj_str = json.dumps(
         filtered,
     )  # dump result before hashing.
+    return hashlib.sha256(obj_str.encode("utf-8")).hexdigest()
+
+
+def port_smart_hash(port: dict, exclude_keys=None):
+    """
+    Generate sha256 of normalised port result.
+    """
+    exclude_keys = exclude_keys or ["hsh256"]
+    filtered = filter_keys({"ports": [port]}, exclude_keys)
+    filtered = master_clean(filtered, SMART_HASH_SCRIPTS)
+    obj_str = json.dumps(filtered["ports"][0])
     return hashlib.sha256(obj_str.encode("utf-8")).hexdigest()
 
 
@@ -174,10 +190,10 @@ def anonymise_headers(input_text: str, headers: list):
             ) or header.lower().startswith("www-authenticate"):
                 # Anonymise les nonce dans tout le texte (CSP complet)
                 input_text = anonymise_nonce(input_text)
-                return input_text
+                continue
             elif header.lower().startswith("x-gitlab-meta"):
                 input_text = anonymise_correlation_id(input_text)
-                return input_text
+                continue
         # Masque la valeur des autres headers
         pattern = re.compile(
             rf"(^\s*{re.escape(header)}\s*:\s*)(.+)", re.IGNORECASE | re.MULTILINE
@@ -199,7 +215,7 @@ def master_clean(not_dedup_nmap_result: dict, scripts: list):
     """
     result = not_dedup_nmap_result.copy()  # duplicate the object.
 
-    for port in result.get("ports"):
+    for port in result.get("ports", []):
         if port.get("scripts"):
             for item in port.get("scripts"):
                 for script in scripts:
