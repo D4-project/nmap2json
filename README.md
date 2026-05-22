@@ -1,68 +1,120 @@
 # nmap2json
 
-## Description 
-nmap2json is a simple python library to convert nmap xml output to python object dumpable in json.
+Convert Nmap XML output to JSON.
 
-It could be also used in command line if you want to save the json as array or, per ip, or send it to the direct output.
+`nmap2json` can be used as a Python library or as a command-line tool. It reads
+Nmap XML (`-oX`) and returns one JSON array containing one object per host.
 
-## Additionnal fields
-nmap2json add two fields per object.
-```
-...
-"host_reply": true,
-"sha256": "446c094a24f248da6a87cc7bffaae3df9cf5b0dc5a07d1ca7fff8cdb2071b389",
-...
-```
-host_reply is set to true if any of the scanned port of the host is up.
-sha256 is the hash of the whole object excluding the fields "starttime" and "endtime"
+## Requirements
 
+- Python 3.10+
 
-## Example
+## Installation
 
-Usage is simple; after running a nmap scan using export into XML file, for example with;
-
->$ nmap -v -A -oX myoutput.xml -p 25,80,443,22 -Pn www.whateveryouscan.domain
-
-you could simply output the results as a json object.
-
->$ python -m nmap2json -i myoutput.xml
-
-## Help
-
+From this repository:
 
 ```bash
-$ python -m nmap2json -h
-usage: __main__.py [-h] -i INPUT [-o OUTPUT] [-m]
+python -m pip install .
+```
+
+## Command-line usage
+
+Generate an Nmap XML report:
+
+```bash
+nmap -v -A -oX myoutput.xml -p 25,80,443,22 -Pn www.example.org
+```
+
+Print converted JSON to stdout:
+
+```bash
+python -m nmap2json -i myoutput.xml
+```
+
+Write JSON to a file:
+
+```bash
+python -m nmap2json -i myoutput.xml -o output.json
+```
+
+Write one JSON file per host, prefixed with the host IP:
+
+```bash
+python -m nmap2json -i myoutput.xml -o output.json --multiple
+```
+
+Filter output:
+
+```bash
+python -m nmap2json -i myoutput.xml --notopen
+python -m nmap2json -i myoutput.xml --deadhost
+```
+
+## CLI help
+
+```text
+usage: python3 -m nmap2json [-h] -i INPUT [-o OUTPUT] [-m] [-n] [-d] [--debug]
 
 Convert Nmap XML to JSON
 
 options:
-  -h, --help            show this help message and exit
-  -i INPUT, --input INPUT
-                        Input Nmap XML file
-  -o OUTPUT, --output OUTPUT
-                        Output JSON file (prints to stdout if omitted)
-  -m, --multiple        Enable multiple JSON outputs (IP prefixed)
-  -n, --notopen         Remove from output closed ports
-  -d, --deadhost        Remove from output dead hosts
+  -h, --help           show this help message and exit
+  -i, --input INPUT    Input Nmap XML file
+  -o, --output OUTPUT  Output JSON file (prints to stdout if omitted)
+  -m, --multiple       Enable multiple JSON outputs (IP prefixed)
+  -n, --notopen        Remove from output closed ports
+  -d, --deadhost       Remove from output dead hosts
+  --debug              Export with smarthash masking
 ```
 
-## Requirements
- - Python >= 3.10
+## Added fields
 
-## Library usage 
+Each host object includes extra fields:
 
-This library allows you to load a nmap xml output either from a file or from a loaded string.
+```json
+{
+  "host_reply": true,
+  "hsh256": "446c094a24f248da6a87cc7bffaae3df9cf5b0dc5a07d1ca7fff8cdb2071b389"
+}
+```
+
+- `host_reply`: `true` when at least one scanned port is open.
+- `hsh256`: stable SHA-256 hash of the host object, excluding `starttime`,
+  `endtime`, and existing hash fields.
+
+Each port also gets its own `hsh256` field.
+
+## Library usage
+
+Load Nmap XML from a string:
 
 ```python
 import json
-from nmap2json import nmap_file_to_json, nmap_xml_to_json
+from nmap2json import nmap_xml_to_json
 
-Convert the XML loaded in a string
 python_obj = nmap_xml_to_json(xml_str)
-
-Convert the XML directly from a file
-python_obj = nmap_file_to_json(xml_file)
-
 print(json.dumps(python_obj, indent=2))
 ```
+
+Load Nmap XML from a file:
+
+```python
+import json
+from nmap2json import nmap_file_to_json
+
+python_obj = nmap_file_to_json("myoutput.xml")
+print(json.dumps(python_obj, indent=2))
+```
+
+Filter closed ports or dead hosts from library calls:
+
+```python
+from nmap2json import nmap_file_to_json
+
+only_open_ports = nmap_file_to_json("myoutput.xml", wipe_notopen=True)
+only_live_hosts = nmap_file_to_json("myoutput.xml", wipe_deadhost=True)
+```
+
+## License
+
+GNU Affero General Public License v3 or later.

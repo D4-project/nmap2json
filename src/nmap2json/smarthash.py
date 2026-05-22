@@ -9,7 +9,7 @@ It process only some nse scripts results;
 ["http-headers", "http-security-headers"]
 
 It does not process some sections in the hash.
-["starttime", "endtime", "sha256"])
+["starttime", "endtime", "hsh256"])
 
 TODO:
 This code should be heavily re-factored in ordre to have flexible configuration
@@ -22,7 +22,7 @@ import json
 import hashlib
 import re
 
-# Headers where cleanup may occuers.
+# Headers where cleanup may occurs.
 HEADERS_TOCLEAN = [
     "CF-Ray",
     "content-security-policy-report-only",
@@ -39,6 +39,8 @@ HEADERS_TOCLEAN = [
     "x-ntap-sg-trace-id",
     "x-request-id",
     "x-runtime",
+    "X-GitHub-Request-Id",
+    "X-Fastly-Request-ID",
 ]
 
 SMART_HASH_SCRIPTS = ["http-headers", "http-security-headers"]
