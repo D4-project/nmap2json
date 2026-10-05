@@ -5,8 +5,7 @@ The goal is to generate a stable hash between two identical scan.
 It blank some value of headers ( for example php session id cookie)
 Before hashing the data with sha256
 
-It process only some nse scripts results;
-["http-headers", "http-security-headers"]
+It processes HTTP header scripts and volatile protocol dates in banner output.
 
 It does not process some sections in the hash.
 ["starttime", "endtime", "hsh256"])
@@ -21,6 +20,7 @@ All Headers sould be processed once.
 import json
 import hashlib
 import re
+from copy import deepcopy
 
 # Headers where cleanup may occurs.
 HEADERS_TOCLEAN = [
@@ -44,6 +44,34 @@ HEADERS_TOCLEAN = [
 ]
 
 SMART_HASH_SCRIPTS = ["http-headers", "http-security-headers"]
+
+# Explicit textual protocol dates only: never guess that numbers are epochs.
+_DAY = r"(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun)"
+_MONTH = r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
+_DATE = (
+    rf"{_DAY},[ \t]+(?:\d{{1,2}}[- ]{_MONTH}[- ]\d{{4}}"
+    rf"|{_MONTH}[ \t]+\d{{1,2}}[ \t]+\d{{4}})"
+    r"[ \t]+\d{2}:\d{2}:\d{2}[ \t]+(?:[+-]\d{4}|[A-Z]{2,4})"
+)
+_DATE_RE = re.compile(rf"\b{_DATE}(?![\w+-])", re.IGNORECASE)
+# Nmap banner output can contain literal \\x0d\\x0a or \\0d\\0a.
+_LINE_START = r"(?:^|[\r\n]|\\(?:x)?0[ad]|\\[rn])"
+_HEADER_DATE_RE = re.compile(
+    rf"({_LINE_START}[ \t]*Date:[ \t]*)({_DATE})(?![\w+-])",
+    re.IGNORECASE,
+)
+_SMTP_DATE_RE = re.compile(
+    rf"({_LINE_START}220[^\r\n]*?;[ \t]*)({_DATE})(?![\w+-])",
+    re.IGNORECASE,
+)
+_COOKIE_EXPIRY_RE = re.compile(r"(\bexpires=)([^;\r\n]*)", re.IGNORECASE)
+
+
+def volatile_dates(text: str):
+    """Mask protocol clock values, not certificate or Last-Modified dates."""
+    for pattern in (_HEADER_DATE_RE, _SMTP_DATE_RE):
+        text = pattern.sub(lambda match: match.group(1) + "[DATE]", text)
+    return text
 
 
 def filter_keys(obj: dict | list, exclude_keys: list):
@@ -126,13 +154,7 @@ def no_time(nt_input: str):
     """
     Remove "time" from a string
     """
-    # Regex pour les dates dans les headers
-    pattern = (
-        r"(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2}[- ]"
-        + "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)"
-        + r"[- ]\d{4} \d{2}:\d{2}:\d{2} [A-Z]{2,4}"
-    )
-    return re.sub(pattern, mask_same_length, nt_input)
+    return _DATE_RE.sub("[DATE]", nt_input)
 
 
 def no_uid(nu_input: str):
@@ -215,18 +237,25 @@ def master_clean(not_dedup_nmap_result: dict, scripts: list):
     in order to be able to generate a smart hash that is not moving between two scans.
 
     """
-    result = not_dedup_nmap_result.copy()  # duplicate the object.
+    result = deepcopy(not_dedup_nmap_result)
 
     for port in result.get("ports", []):
         if port.get("scripts"):
             for item in port.get("scripts"):
-                for script in scripts:
-                    if item.get("id") == script:
-                        to_clean = item.get("output")
-                        # Need to be put in a config file one day.
-                        cleaned = anonymise_headers(
-                            anonymise_cookies(no_uid(no_time(to_clean))),
-                            HEADERS_TOCLEAN,
-                        )
-                        item["output"] = cleaned  # replace the headers
+                to_clean = item.get("output")
+                if not isinstance(to_clean, str):
+                    continue
+                if item.get("id") in scripts:
+                    cleaned = anonymise_headers(
+                        anonymise_cookies(no_uid(volatile_dates(to_clean))),
+                        HEADERS_TOCLEAN,
+                    )
+                    # Cookie expiry clocks also move between scans.
+                    cleaned = _COOKIE_EXPIRY_RE.sub(
+                        lambda match: match.group(1) + no_time(match.group(2)),
+                        cleaned,
+                    )
+                    item["output"] = cleaned
+                elif item.get("id") == "banner":
+                    item["output"] = volatile_dates(to_clean)
     return result

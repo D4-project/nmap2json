@@ -17,6 +17,18 @@ From this repository:
 python -m pip install .
 ```
 
+After updating this checkout, reinstall it in the environment used by your
+scanner or migration tools (updating Git alone does not update that environment):
+
+```bash
+python -m pip install --force-reinstall --no-deps .
+python -c "import nmap2json.smarthash as s; print(s.__file__)"
+```
+
+The package metadata currently uses version `0.0.0`; record the deployed Git
+revision with `git rev-parse HEAD` rather than relying on the package version
+alone. Installing this checkout does not publish a release to PyPI.
+
 ## Command-line usage
 
 Generate an Nmap XML report:
@@ -67,6 +79,9 @@ options:
   --debug              Export with smarthash masking
 ```
 
+Note: `--debug` is currently parsed but not applied by the CLI. It does not
+export masked data. Use `master_clean()` below to inspect normalization.
+
 ## Added fields
 
 Each host object includes extra fields:
@@ -83,6 +98,20 @@ Each host object includes extra fields:
   `endtime`, and existing hash fields.
 
 Each port also gets its own `hsh256` field.
+
+Smart hashing masks volatile protocol dates with a fixed `[DATE]` marker in
+the hash input: SMTP `220 ...; <date>` greetings, HTTP/RTSP `Date:` headers in
+`banner`, and `Date:` headers in `http-headers` / `http-security-headers`
+(plus cookie expiry). Textual weekday/month dates support case variations, one- or
+two-digit days, numeric timezones, and month-first RTSP dates. Banner line
+breaks may be literal or Nmap-escaped. This is deliberately not a generic
+date remover: certificate validity, `Last-Modified`, and build dates remain
+significant. Other date formats are not currently normalized.
+
+Normalization leaves original reports unchanged. SHA-256 and the existing
+JSON serialization remain unchanged. Previously stored hashes are not updated
+automatically: rehashing old reports requires a separate migration, including
+merging observation timestamps when multiple old IDs collapse to one new ID.
 
 ## Library usage
 
@@ -114,6 +143,66 @@ from nmap2json import nmap_file_to_json
 only_open_ports = nmap_file_to_json("myoutput.xml", wipe_notopen=True)
 only_live_hosts = nmap_file_to_json("myoutput.xml", wipe_deadhost=True)
 ```
+
+### Smart hashing an existing port report
+
+```python
+from copy import deepcopy
+from nmap2json.smarthash import port_smart_hash
+
+port = {
+    "protocol": "tcp",
+    "portid": "25",
+    "scripts": [{
+        "id": "banner",
+        "output": "220 mail ESMTP; mon, 2 mar 2026 10:13:52 -0500",
+    }],
+}
+later = deepcopy(port)
+later["scripts"][0]["output"] = (
+    "220 mail ESMTP; Tue, 12 May 2026 10:15:46 GMT"
+)
+assert port_smart_hash(port) == port_smart_hash(later)
+assert "mon, 2 mar" in port["scripts"][0]["output"]  # Raw data unchanged.
+```
+
+`port_smart_hash()` returns a lowercase SHA-256 hexadecimal string and excludes
+existing `hsh256` fields by default. For a complete host object, call
+`headers_smart_hash(host, exclude_keys=["starttime", "endtime", "hsh256"])`.
+Unlike the converter, a direct call does not sort input dictionaries/lists:
+keep serialization order consistent when rehashing stored reports.
+
+To inspect a normalized copy without hashing:
+
+```python
+from nmap2json.smarthash import master_clean, SMART_HASH_SCRIPTS
+
+normalized = master_clean({"ports": [port]}, SMART_HASH_SCRIPTS)
+print(normalized["ports"][0]["scripts"][0]["output"])
+# 220 mail ESMTP; [DATE]
+```
+
+### Existing datasets
+
+The improved normalization changes hashes for affected reports. Deploy the
+same revision on scanners and migration tools. A plain export/import that
+retains old IDs cannot deduplicate old date variants: recalculate port hashes
+and derived IDs, merge earliest/latest observation bounds, and remove superseded
+IDs during replacement. Preserve original report contents; select a deterministic
+representative when several reports merge. nmap2json itself does not migrate
+databases or rewrite historical IDs.
+
+## Tests
+
+From the repository root:
+
+```bash
+PYTHONPATH=src python -m unittest discover -s tests -v
+```
+
+Date regression tests cover SMTP, HTTP/RTSP, escaped banner line endings,
+header/cookie clocks, raw-input preservation, and meaningful differences
+(service versions, certificate validity, `Last-Modified`, build dates).
 
 ## License
 
