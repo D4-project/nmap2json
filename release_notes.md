@@ -26,14 +26,14 @@ Release candidate for changes since `v2605.01`.
 - Move the smart-hash debug helper out of the package source tree into
   `tests/smarthash_debug.py`.
 
-### Compatibility Notes
+### Packaging
 
 - Existing raw scan data remains unchanged.
 - SHA-256 and JSON serialization remain unchanged.
 - Hashes for affected reports may change after rehashing. Existing stored
   hashes are not migrated automatically.
-- The package metadata still uses version `0.0.0`; record deployed Git
-  revisions when installing from source.
+- PyPI package version: `2610.1` (PEP 440 form matching GitHub release
+  `v2610.01`).
 
 ### Commits
 

@@ -25,9 +25,9 @@ python -m pip install --force-reinstall --no-deps .
 python -c "import nmap2json.smarthash as s; print(s.__file__)"
 ```
 
-The package metadata currently uses version `0.0.0`; record the deployed Git
-revision with `git rev-parse HEAD` rather than relying on the package version
-alone. Installing this checkout does not publish a release to PyPI.
+The package metadata uses a calendar-style release version. Record the deployed
+Git revision with `git rev-parse HEAD` as well when installing from source.
+Installing this checkout does not publish a release to PyPI.
 
 ## Command-line usage
 
