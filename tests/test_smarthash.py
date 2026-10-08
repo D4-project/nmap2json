@@ -66,6 +66,19 @@ class SmartHashTests(unittest.TestCase):
             "X-Fastly-Request-ID: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", cleaned
         )
 
+    def test_issue_8_masks_connection_id_header(self):
+        output = "\n".join(
+            [
+                "Server: ngs-media-server",
+                "Connection-Id: 6cR9g0UtgXF2T9ck",
+            ]
+        )
+
+        cleaned = anonymise_headers(output, HEADERS_TOCLEAN)
+
+        self.assertNotIn("6cR9g0UtgXF2T9ck", cleaned)
+        self.assertIn("Connection-Id: XXXXXXXXXXXXXXXX", cleaned)
+
 
 if __name__ == "__main__":
     unittest.main()

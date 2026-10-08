@@ -12,3 +12,5 @@
   not migrated automatically; SHA-256 and serialization remain unchanged.
 
 - Mask `X-GitHub-Request-Id` and `X-Fastly-Request-ID` before smart hashing.
+- Mask `Connection-Id` before smart hashing.
+- Move the smart hash debug helper out of the package source tree.

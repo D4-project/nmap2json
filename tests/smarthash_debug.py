@@ -8,7 +8,7 @@ This script will test the smarthash against a converted json collection
 import argparse
 import json
 import hashlib
-from smarthash import master_clean, headers_smart_hash, filter_keys
+from nmap2json.smarthash import filter_keys, headers_smart_hash, master_clean
 
 
 def main(filename: str, debug: bool = False):

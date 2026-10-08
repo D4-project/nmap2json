@@ -25,6 +25,7 @@ from copy import deepcopy
 # Headers where cleanup may occurs.
 HEADERS_TOCLEAN = [
     "CF-Ray",
+    "Connection-Id",
     "content-security-policy-report-only",
     "ETag",
     "request-id",
