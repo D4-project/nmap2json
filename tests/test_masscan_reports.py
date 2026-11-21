@@ -6,6 +6,40 @@ from nmap2json import nmap_file_to_json, nmap_xml_to_json
 
 
 class MasscanReportTests(unittest.TestCase):
+    def test_requested_hostnames_apply_only_to_open_masscan_hosts_before_hash(self):
+        opened = self.event(22, 100)
+        closed = self.event(22, 100, address="192.0.2.2", state="closed")
+        names = [
+            {"name": "vlan-luxpost.lu", "type": "user"},
+            {"name": "62.16.7.109.rev.sfr.net", "type": "PTR"},
+        ]
+        called = []
+
+        def resolve(address):
+            called.append(address)
+            return names + names[:1]
+
+        converted = nmap_xml_to_json(
+            self.report(opened, closed), True, True, hostname_resolver=resolve
+        )
+        self.assertEqual(called, ["192.0.2.1"])
+        self.assertEqual(converted[0]["hostnames"], [names[1], names[0]])
+        self.assertEqual(len(converted), 1)
+
+        expected_xml = opened.replace(
+            "<ports>",
+            '<hostnames><hostname name="62.16.7.109.rev.sfr.net" type="PTR"/>'
+            '<hostname name="vlan-luxpost.lu" type="user"/></hostnames><ports>',
+        )
+        self.assertEqual(
+            converted, nmap_xml_to_json(self.report(expected_xml), True, True)
+        )
+        called.clear()
+        nmap_xml_to_json(
+            self.report(opened, scanner="nmap"), True, True, hostname_resolver=resolve
+        )
+        self.assertEqual(called, [])
+
     def event(
         self,
         port,
@@ -98,7 +132,9 @@ class MasscanReportTests(unittest.TestCase):
         hosts = nmap_xml_to_json(self.report(*events, events[0]))
         self.assertEqual([host["addr"] for host in hosts], addresses)
         for host in hosts:
-            self.assertEqual(host["hostnames"], [{"name": "example.test", "type": "user"}])
+            self.assertEqual(
+                host["hostnames"], [{"name": "example.test", "type": "user"}]
+            )
 
     def test_large_historical_nmap_report_keeps_its_hash(self):
         event = self.event(22, 100)

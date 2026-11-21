@@ -13,6 +13,7 @@ The library provides,
     load a xml from a string and convert it into a python object.
 
 """
+
 import xml.etree.ElementTree as ET
 import json
 from io import BytesIO, StringIO
@@ -214,7 +215,11 @@ def add_port_hashes(ports: list):
 
 
 def nmap_file_to_json(
-    xml_file: str, wipe_notopen: bool = False, wipe_deadhost: bool = False
+    xml_file: str,
+    wipe_notopen: bool = False,
+    wipe_deadhost: bool = False,
+    *,
+    hostname_resolver=None,
 ) -> dict:
     """
     Parse Nmap XML String report
@@ -224,28 +229,41 @@ def nmap_file_to_json(
     else:
         with open(xml_file, "rb") as stream:
             tree = read_report(stream)
-    return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
+    return nmap_to_json(
+        tree, wipe_notopen, wipe_deadhost, hostname_resolver=hostname_resolver
+    )
 
 
 def nmap_xml_to_json(
-    xml_file: str, wipe_notopen: bool = False, wipe_deadhost: bool = False
+    xml_file: str,
+    wipe_notopen: bool = False,
+    wipe_deadhost: bool = False,
+    *,
+    hostname_resolver=None,
 ) -> dict:
     """
     Parse Nmap XML File report
     """
     stream = BytesIO(xml_file) if isinstance(xml_file, bytes) else StringIO(xml_file)
     tree = read_report(stream)
-    return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
+    return nmap_to_json(
+        tree, wipe_notopen, wipe_deadhost, hostname_resolver=hostname_resolver
+    )
 
 
 def nmap_to_json(
-    tree: ET, wipe_notopen: bool = False, wipe_deadhost: bool = False
+    tree: ET,
+    wipe_notopen: bool = False,
+    wipe_deadhost: bool = False,
+    *,
+    hostname_resolver=None,
 ) -> dict:
     """
     This is the main parsing function
     """
     root = tree.getroot() if isinstance(tree, ET.ElementTree) else tree
-    if root.get("scanner") == "masscan":
+    masscan_report = root.get("scanner") == "masscan"
+    if masscan_report:
         host_elements = merged_hosts(root)
     else:
         host_elements = root.findall("host")
@@ -284,6 +302,20 @@ def nmap_to_json(
 
         # Inject True if the host has replied on any ports.
         data["host_reply"] = any_open_port(data)
+
+        if masscan_report and data["host_reply"] and hostname_resolver is not None:
+            for hostname in hostname_resolver(data["addr"]) or ():
+                if (
+                    isinstance(hostname, dict)
+                    and isinstance(hostname.get("name"), str)
+                    and hostname.get("name")
+                    and hostname.get("type") in ("PTR", "user")
+                    and hostname not in data["hostnames"]
+                ):
+                    data["hostnames"].append(dict(hostname))
+            data["hostnames"].sort(
+                key=lambda item: (item.get("type", ""), item.get("name", ""))
+            )
 
         # If required cleanup non open ports.
         if wipe_notopen:

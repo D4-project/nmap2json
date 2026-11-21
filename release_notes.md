@@ -6,6 +6,9 @@
 - Group repeated observations by IP and transport/port; preserve observed
   services and banners as `masscan-detection` script entries.
 - Keep status-only ports free of inferred application protocols.
+- Accept hostnames supplied by the caller for Masscan IPs with open ports,
+  before calculating document hashes. This lets Plum-Agent preserve requested
+  FQDNs and PTR records without looking up IPs with no open port.
 - Preserve existing Nmap output and smart hashes across the regression corpus.
 - PyPI package version: `2611.1`.
 
