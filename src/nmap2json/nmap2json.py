@@ -18,6 +18,7 @@ import xml.etree.ElementTree as ET
 import json
 from io import BytesIO, StringIO
 from .masscan import merged_hosts
+from .banner import normalize_banner
 from .report_xml import read_report
 from .smarthash import headers_smart_hash, port_smart_hash
 
@@ -131,6 +132,10 @@ def map_port_and_nse(current_host: ET.Element):
             port_data["scripts"] = []
             for s in scripts:
                 script_entry = s.attrib.copy()
+                if "output" in script_entry:
+                    script_entry["output"] = normalize_banner(
+                        script_entry["output"], script_entry.get("id")
+                    )
 
                 # parse tables recursively, hopes it comes back... :)
                 for table in s.findall("table"):

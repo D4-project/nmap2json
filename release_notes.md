@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2611.03
+
+- Preserve the full received banner and Masscan detection outputs with consistent
+  escaped bytes. Provide an optional bounded preview without splitting bytes.
+- Mask observed protocol dates and FTP clocks before hashing both script types,
+  including an HTTP Date header cut by the banner budget.
+- Hashes for affected observations change. Stored historical reports require
+  explicit reconversion and rehashing to adopt this policy.
+
 ## v2611.2 - Masscan report conversion
 
 - Convert Masscan XML into the existing per-host and per-port JSON shape.

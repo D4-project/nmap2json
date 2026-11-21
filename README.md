@@ -38,6 +38,27 @@ The package metadata uses a calendar-style release version. Record the deployed
 Git revision with `git rev-parse HEAD` as well when installing from source.
 Installing this checkout does not publish a release to PyPI.
 
+### Banner storage and Plum compatibility
+
+
+Version `2611.3` uses the release label `v2611.03`. Current Plum-Island and
+Plum-Agent require `nmap2json>=2611.3`. Install the matching wheel or reinstall
+this source revision in each consumer's virtual environment. Updating the
+checkout alone is insufficient.
+
+Preserve the complete banner received from either scanner, without a new
+64-character storage limit. The original Nmap `banner.nse` output may already
+be truncated and cannot be reconstructed. Masscan's FTP parser removes carriage
+returns; normalization does not invent missing bytes. Nonprintable bytes use
+consistent `\xNN` escaping. Optional display clipping does not affect stored data.
+
+Masscan service/output metadata remains in `masscan-detection`. Plum-Island adds
+the standard `banner` script and extracts observed HTTP response headers into
+`http-headers`, before hashing and tagging. The IP view shows a single full banner
+block, as for Nmap. Protocol dates and FTP clocks are masked only in hash input;
+original observations remain intact. Affected hashes can change; existing stored
+hashes require explicit reconversion and rehashing to adopt the new policy.
+
 ## Command-line usage
 
 Generate an Nmap XML report:

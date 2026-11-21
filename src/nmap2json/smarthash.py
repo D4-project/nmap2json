@@ -66,12 +66,21 @@ _SMTP_DATE_RE = re.compile(
     re.IGNORECASE,
 )
 _COOKIE_EXPIRY_RE = re.compile(r"(\bexpires=)([^;\r\n]*)", re.IGNORECASE)
+_TRUNCATED_DATE_RE = re.compile(
+    rf"({_LINE_START}[ \t]*Date:[ \t]*)(?:(?!\\(?:x)?0[ad]|[\r\n]).)*\.\.\.$",
+    re.IGNORECASE,
+)
+_FTP_CLOCK_RE = re.compile(
+    r"(220[- ]Local time is now )\d{1,2}(?::\d{0,2}){0,2}", re.IGNORECASE
+)
 
 
 def volatile_dates(text: str):
     """Mask protocol clock values, not certificate or Last-Modified dates."""
     for pattern in (_HEADER_DATE_RE, _SMTP_DATE_RE):
         text = pattern.sub(lambda match: match.group(1) + "[DATE]", text)
+    text = _TRUNCATED_DATE_RE.sub(lambda match: match.group(1) + "[DATE]...", text)
+    text = _FTP_CLOCK_RE.sub(lambda match: match.group(1) + "[TIME]", text)
     return text
 
 
@@ -257,6 +266,6 @@ def master_clean(not_dedup_nmap_result: dict, scripts: list):
                         cleaned,
                     )
                     item["output"] = cleaned
-                elif item.get("id") == "banner":
+                elif item.get("id") in ("banner", "masscan-detection"):
                     item["output"] = volatile_dates(to_clean)
     return result
