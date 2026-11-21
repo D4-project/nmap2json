@@ -15,7 +15,21 @@ The library provides,
 """
 import xml.etree.ElementTree as ET
 import json
+from io import BytesIO, StringIO
+from .masscan import merged_hosts
+from .report_xml import read_report
 from .smarthash import headers_smart_hash, port_smart_hash
+
+
+def script_order(script):
+    if script["id"] == "masscan-detection":
+        return (
+            script["id"],
+            script.get("service", ""),
+            "output" in script,
+            script.get("output", ""),
+        )
+    return (script["id"],)
 
 
 def sort_dict(data: str | dict):
@@ -39,7 +53,7 @@ def sort_dict(data: str | dict):
         if all(isinstance(i, dict) for i in normalized_items):
             # If id Key is present, sort using that as key (for services)
             if all("id" in d for d in normalized_items):
-                return sorted(normalized_items, key=lambda d: d["id"])
+                return sorted(normalized_items, key=script_order)
             else:
                 # Fallback : use json dump with sorting
                 return sorted(
@@ -103,7 +117,7 @@ def map_port_and_nse(current_host: ET.Element):
 
     ports_data = []
     for port in current_host.findall("ports/port"):
-        port_data = port.attrib
+        port_data = port.attrib.copy()
         state = port.find("state")
         service = port.find("service")
         scripts = port.findall("script")
@@ -205,7 +219,11 @@ def nmap_file_to_json(
     """
     Parse Nmap XML String report
     """
-    tree = ET.parse(xml_file)
+    if hasattr(xml_file, "read"):
+        tree = read_report(xml_file)
+    else:
+        with open(xml_file, "rb") as stream:
+            tree = read_report(stream)
     return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
 
 
@@ -215,7 +233,8 @@ def nmap_xml_to_json(
     """
     Parse Nmap XML File report
     """
-    tree = ET.fromstring(xml_file)
+    stream = BytesIO(xml_file) if isinstance(xml_file, bytes) else StringIO(xml_file)
+    tree = read_report(stream)
     return nmap_to_json(tree, wipe_notopen, wipe_deadhost)
 
 
@@ -225,10 +244,14 @@ def nmap_to_json(
     """
     This is the main parsing function
     """
-    root = tree.getroot()
+    root = tree.getroot() if isinstance(tree, ET.ElementTree) else tree
+    if root.get("scanner") == "masscan":
+        host_elements = merged_hosts(root)
+    else:
+        host_elements = root.findall("host")
 
     hosts = []
-    for curr_host in root.findall("host"):
+    for curr_host in host_elements:
         data = {
             "addr": None,  # defined to keep the uppper place in json
             "hsh256": None,

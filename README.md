@@ -1,5 +1,14 @@
 # nmap2json
 
+Version `2611.1` also reads saved Masscan XML reports up to
+1 MiB. The converter groups records from the same report by IP, transport and
+port. Each observed service and banner is stored in a `masscan-detection`
+script entry. A port status alone carries no service label.
+
+```sh
+python -m nmap2json -i saved-report.xml -o report.json
+```
+
 Convert Nmap XML output to JSON.
 
 `nmap2json` can be used as a Python library or as a command-line tool. It reads

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nmap2json"
-version = "2610.1"
+version = "2611.1"
 authors = [
   { name="Paul Jung", email="paul.jung@circl.lu" },
 ]
@@ -26,4 +26,4 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.scripts]
-nmap2json = 'nmap2json:main'
+nmap2json = 'nmap2json.__main__:main'

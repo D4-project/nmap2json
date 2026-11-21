@@ -1,5 +1,14 @@
 # Release Notes
 
+## v2611.01 - Masscan support
+
+- Convert Masscan XML into the existing per-host and per-port JSON shape.
+- Group repeated observations by IP and transport/port; preserve observed
+  services and banners as `masscan-detection` script entries.
+- Keep status-only ports free of inferred application protocols.
+- Preserve existing Nmap output and smart hashes across the regression corpus.
+- PyPI package version: `2611.1`.
+
 ## v2610.01 - 2026-10-08
 
 Release candidate for changes since `v2605.01`.
