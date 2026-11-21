@@ -1,6 +1,6 @@
 # Release Notes
 
-## v2611.01 - Masscan support
+## v2611.2 - Masscan report conversion
 
 - Convert Masscan XML into the existing per-host and per-port JSON shape.
 - Group repeated observations by IP and transport/port; preserve observed
@@ -10,7 +10,7 @@
   before calculating document hashes. This lets Plum-Agent preserve requested
   FQDNs and PTR records without looking up IPs with no open port.
 - Preserve existing Nmap output and smart hashes across the regression corpus.
-- PyPI package version: `2611.1`.
+- Package version: `2611.2`. This version supersedes the local `2611.1` candidates.
 
 ## v2610.01 - 2026-10-08
 
