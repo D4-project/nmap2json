@@ -285,6 +285,9 @@ def nmap_to_json(
             "ports": [],
         }
 
+        if masscan_report:
+            data["engine"] = "masscan"
+
         # Status
         status = curr_host.find("status")
         if status is not None:

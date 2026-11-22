@@ -64,12 +64,14 @@ class MasscanReportTests(unittest.TestCase):
             event = self.event(5060, 100, state=state)
             for filtered in (True, False):
                 with self.subTest(state=state, filtered=filtered):
-                    self.assertEqual(
-                        nmap_xml_to_json(self.report(event), filtered, filtered),
-                        nmap_xml_to_json(
-                            self.report(event, scanner="nmap"), filtered, filtered
-                        ),
+                    masscan = nmap_xml_to_json(self.report(event), filtered, filtered)
+                    nmap = nmap_xml_to_json(
+                        self.report(event, scanner="nmap"), filtered, filtered
                     )
+                    for report in nmap:
+                        self.assertNotIn("engine", report)
+                        report["engine"] = "masscan"
+                    self.assertEqual(masscan, nmap)
         self.assertEqual(nmap_xml_to_json(self.report(), True, True), [])
 
     def test_permutations_keep_one_port_and_match_equivalent_nse(self):
@@ -87,6 +89,8 @@ class MasscanReportTests(unittest.TestCase):
             '<script id="masscan-detection" service="smtp" output="220 ESMTP"/>',
         )
         expected = nmap_xml_to_json(self.report(equivalent, scanner="nmap"))
+        for host in expected:
+            host["engine"] = "masscan"
         for events in ((opened, smtp, tls), (tls, smtp, opened, smtp)):
             self.assertEqual(nmap_xml_to_json(self.report(*events)), expected)
         self.assertEqual(expected[0]["endtime"], "112")

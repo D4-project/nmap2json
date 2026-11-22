@@ -41,8 +41,8 @@ Installing this checkout does not publish a release to PyPI.
 ### Banner storage and Plum compatibility
 
 
-Version `2611.3` uses the release label `v2611.03`. Current Plum-Island and
-Plum-Agent require `nmap2json>=2611.3`. Install the matching wheel or reinstall
+Version `2611.4` uses the release label `v2611.04` (local candidate). Current Plum-Island and
+Plum-Agent require `nmap2json>=2611.4`. Install the matching wheel or reinstall
 this source revision in each consumer's virtual environment. Updating the
 checkout alone is insufficient.
 
@@ -51,6 +51,11 @@ Preserve the complete banner received from either scanner, without a new
 be truncated and cannot be reconstructed. Masscan's FTP parser removes carriage
 returns; normalization does not invent missing bytes. Nonprintable bytes use
 consistent `\xNN` escaping. Optional display clipping does not affect stored data.
+
+Masscan host reports include `"engine": "masscan"`, determined from the XML
+scanner attribute. Nmap reports stay unchanged: no Nmap marker is added.
+The engine metadata is excluded from host hashes; port and script hashes are
+unchanged. Plum treats unmarked reports as Nmap without migrating historical data.
 
 Masscan service/output metadata remains in `masscan-detection`. Plum-Island adds
 the standard `banner` script and extracts observed HTTP response headers into

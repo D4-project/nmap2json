@@ -1,5 +1,12 @@
 # Release Notes
 
+## v2611.04 — local candidate
+
+- Add `"engine": "masscan"` only to Masscan host reports. Nmap JSON stays
+  unchanged; unmarked reports are treated as Nmap by Plum.
+- Exclude this report metadata from host content hashes. Existing host, port
+  and script hashes remain unchanged; NSE data named `engine` is preserved.
+
 ## v2611.03
 
 - Preserve the full received banner and Masscan detection outputs with consistent

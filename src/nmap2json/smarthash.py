@@ -106,6 +106,10 @@ def headers_smart_hash(obj: dict, exclude_keys=None):
     Generate sha256 of normalised result result.
     """
     exclude_keys = exclude_keys or []
+    # Scanner provenance is report metadata, not a content identity component.
+    # Restrict this to the host report: NSE fields named engine remain meaningful.
+    if isinstance(obj, dict) and "addr" in obj and "ports" in obj:
+        obj = {key: value for key, value in obj.items() if key != "engine"}
     filtered = filter_keys(obj, exclude_keys)  # Remove some fiels from report
     filtered = master_clean(filtered, SMART_HASH_SCRIPTS)  # Heaving filtering out.
     obj_str = json.dumps(
