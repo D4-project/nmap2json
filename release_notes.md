@@ -1,6 +1,6 @@
 # Release Notes
 
-## v2611.04 — local candidate
+## v2611.04
 
 - Add `"engine": "masscan"` only to Masscan host reports. Nmap JSON stays
   unchanged; unmarked reports are treated as Nmap by Plum.

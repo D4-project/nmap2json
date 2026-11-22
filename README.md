@@ -41,7 +41,7 @@ Installing this checkout does not publish a release to PyPI.
 ### Banner storage and Plum compatibility
 
 
-Version `2611.4` uses the release label `v2611.04` (local candidate). Current Plum-Island and
+Version `2611.4` uses the release label `v2611.04`. Current Plum-Island and
 Plum-Agent require `nmap2json>=2611.4`. Install the matching wheel or reinstall
 this source revision in each consumer's virtual environment. Updating the
 checkout alone is insufficient.
@@ -56,6 +56,13 @@ Masscan host reports include `"engine": "masscan"`, determined from the XML
 scanner attribute. Nmap reports stay unchanged: no Nmap marker is added.
 The engine metadata is excluded from host hashes; port and script hashes are
 unchanged. Plum treats unmarked reports as Nmap without migrating historical data.
+
+Why no Nmap marker: Nmap is Plum's historical default. Explicitly marking it
+would require a bulk backfill and redundant index memberships on installations
+with two million reports. Plum instead searches Nmap as the candidate UID set
+minus explicitly marked Masscan UIDs. No historical reports are rewritten; an
+old unmarked Masscan report is consequently treated as Nmap. This is scanner
+metadata (`engine:masscan`), not an Antibodies tag.
 
 Masscan service/output metadata remains in `masscan-detection`. Plum-Island adds
 the standard `banner` script and extracts observed HTTP response headers into
