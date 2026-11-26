@@ -1,8 +1,10 @@
 # nmap2json
 
-Convert saved Nmap and Masscan XML reports into a common JSON format.
-The command-line tool and Python library produce the same array of host
-objects with a shared host and port schema and the same smart-hash rules.
+`nmap2json` is a Python library and command-line tool that turns saved Nmap and
+Masscan XML scan reports into a common JSON format. It returns one record per
+host with its IP address, ports and scanner observations, so the same code can
+process reports from both scanners. Each host and port also gets a SHA-256 smart
+hash for comparing and deduplicating observations.
 
 For Masscan XML reports up to 1 MiB, the converter groups repeated observations
 by IP address, transport protocol, and port. It stores observed services and
