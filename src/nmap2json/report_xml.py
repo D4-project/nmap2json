@@ -12,11 +12,13 @@ def read_report(stream):
     prefix = expat.ParserCreate()
 
     def root_start(name, attributes):
+        """Record the root scanner type to enforce the Masscan size limit."""
         nonlocal scanner
         if scanner is None:
             scanner = attributes.get("scanner", "")
 
     def check_doctype(name, system, public, has_subset):
+        """Allow only the bare Nmap document type without a subset."""
         # Nmap emits a bare <!DOCTYPE nmaprun> in ordinary reports.
         if name != "nmaprun" or system or public or has_subset:
             raise ValueError("Unsupported XML document type")

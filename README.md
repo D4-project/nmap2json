@@ -1,18 +1,13 @@
 # nmap2json
 
-Version `2611.1` also reads saved Masscan XML reports up to
-1 MiB. The converter groups records from the same report by IP, transport and
-port. Each observed service and banner is stored in a `masscan-detection`
-script entry. A port status alone carries no service label.
+Convert saved Nmap and Masscan XML reports into a common JSON format.
+The command-line tool and Python library produce the same array of host
+objects with a shared host and port schema and the same smart-hash rules.
 
-```sh
-python -m nmap2json -i saved-report.xml -o report.json
-```
-
-Convert Nmap XML output to JSON.
-
-`nmap2json` can be used as a Python library or as a command-line tool. It reads
-Nmap XML (`-oX`) and returns one JSON array containing one object per host.
+For Masscan XML reports up to 1 MiB, the converter groups repeated observations
+by IP address, transport protocol, and port. It stores observed services and
+banners in `masscan-detection` script entries and adds `"engine": "masscan"`
+to each host. An open port without service evidence remains unlabeled.
 
 ## Requirements
 
@@ -38,13 +33,10 @@ The package metadata uses a calendar-style release version. Record the deployed
 Git revision with `git rev-parse HEAD` as well when installing from source.
 Installing this checkout does not publish a release to PyPI.
 
-### Banner storage and Plum compatibility
+## Banner storage and Plum compatibility
 
-
-Version `2611.4` uses the release label `v2611.04`. Current Plum-Island and
-Plum-Agent require `nmap2json>=2611.4`. Install the matching wheel or reinstall
-this source revision in each consumer's virtual environment. Updating the
-checkout alone is insufficient.
+Version `2611.5` uses the Git tag `v2611.05`. Install the same version in each
+Plum-Island, Plum-Agent, and migration environment to keep hashes consistent.
 
 Preserve the complete banner received from either scanner, without a new
 64-character storage limit. The original Nmap `banner.nse` output may already
@@ -73,23 +65,14 @@ hashes require explicit reconversion and rehashing to adopt the new policy.
 
 ## Command-line usage
 
-Generate an Nmap XML report:
+Convert a saved Nmap or Masscan XML report with the same command.
 
 ```bash
-nmap -v -A -oX myoutput.xml -p 25,80,443,22 -Pn www.example.org
+python -m nmap2json -i nmap-report.xml -o output.json
+python -m nmap2json -i masscan-report.xml -o output.json
 ```
 
-Print converted JSON to stdout:
-
-```bash
-python -m nmap2json -i myoutput.xml
-```
-
-Write JSON to a file:
-
-```bash
-python -m nmap2json -i myoutput.xml -o output.json
-```
+Omit `-o` to print the JSON to stdout.
 
 Write one JSON file per host, prefixed with the host IP:
 
@@ -107,13 +90,13 @@ python -m nmap2json -i myoutput.xml --deadhost
 ## CLI help
 
 ```text
-usage: python3 -m nmap2json [-h] -i INPUT [-o OUTPUT] [-m] [-n] [-d] [--debug]
+usage: python -m nmap2json [-h] -i INPUT [-o OUTPUT] [-m] [-n] [-d] [--debug]
 
-Convert Nmap XML to JSON
+Convert saved Nmap or Masscan XML reports to JSON
 
 options:
   -h, --help           show this help message and exit
-  -i, --input INPUT    Input Nmap XML file
+  -i, --input INPUT    Input XML report
   -o, --output OUTPUT  Output JSON file (prints to stdout if omitted)
   -m, --multiple       Enable multiple JSON outputs (IP prefixed)
   -n, --notopen        Remove from output closed ports
@@ -141,6 +124,14 @@ Each host object includes extra fields:
 
 Each port also gets its own `hsh256` field.
 
+### Response TTL and hashes
+
+Since `2611.5`, host and port hashes omit nonzero `reason_ttl` values for both
+scanners. A reply's TTL can change with the network path and hop count, even
+when the host and service are unchanged. An explicit zero stays in the hash
+input to preserve the historical treatment of zero in existing hashes. The
+exported JSON retains the original `reason_ttl` value.
+
 Smart hashing masks volatile protocol dates with a fixed `[DATE]` marker in
 the hash input: SMTP `220 ...; <date>` greetings, HTTP/RTSP `Date:` headers in
 `banner`, and `Date:` headers in `http-headers` / `http-security-headers`
@@ -157,7 +148,7 @@ merging observation timestamps when multiple old IDs collapse to one new ID.
 
 ## Library usage
 
-Load Nmap XML from a string:
+Load a Nmap or Masscan XML report from a string.
 
 ```python
 import json
@@ -167,7 +158,7 @@ python_obj = nmap_xml_to_json(xml_str)
 print(json.dumps(python_obj, indent=2))
 ```
 
-Load Nmap XML from a file:
+Load a Nmap or Masscan XML report from a file.
 
 ```python
 import json
@@ -227,10 +218,10 @@ print(normalized["ports"][0]["scripts"][0]["output"])
 ### Existing datasets
 
 The improved normalization changes hashes for affected reports. Deploy the
-same revision on scanners and migration tools. A plain export/import that
-retains old IDs cannot deduplicate old date variants: recalculate port hashes
-and derived IDs, merge earliest/latest observation bounds, and remove superseded
-IDs during replacement. Preserve original report contents; select a deterministic
+same revision on scanners and migration tools. A plain export/import that keeps
+old IDs retains separate date or TTL variants. Recalculate port hashes and derived
+IDs, merge earliest/latest observation bounds, and remove superseded IDs during
+replacement. Preserve original report contents; select a deterministic
 representative when several reports merge. nmap2json itself does not migrate
 databases or rewrite historical IDs.
 
@@ -242,7 +233,9 @@ From the repository root:
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-Date regression tests cover SMTP, HTTP/RTSP, escaped banner line endings,
+Regression tests cover the common Masscan and Nmap output format, nonzero
+TTL stability, and preservation of the historical zero TTL behavior. Date tests
+cover SMTP, HTTP/RTSP, escaped banner line endings,
 header/cookie clocks, raw-input preservation, and meaningful differences
 (service versions, certificate validity, `Last-Modified`, build dates).
 

@@ -1,18 +1,6 @@
 #!/usr/bin/env python3
 
-"""
-This library will convert a XLM nmap output file to somehow a usable python object.
-It also calculate an unique MD5 hash based on all fields except timestamps ones.
-
-The library provides,
-
-    nmap_file_to_json(str)
-    load a xml file and convert it into a python object.
-    The input str is a string with the file path.
-    nmap_xfl_to_json(str)
-    load a xml from a string and convert it into a python object.
-
-"""
+"""Normalize Nmap and Masscan XML reports and compute host and port SHA-256 hashes."""
 
 import xml.etree.ElementTree as ET
 import json
@@ -24,6 +12,7 @@ from .smarthash import headers_smart_hash, port_smart_hash
 
 
 def script_order(script):
+    """Sort scripts by ID and break ties between Masscan detections."""
     if script["id"] == "masscan-detection":
         return (
             script["id"],
@@ -226,9 +215,7 @@ def nmap_file_to_json(
     *,
     hostname_resolver=None,
 ) -> dict:
-    """
-    Parse Nmap XML String report
-    """
+    """Read a Nmap or Masscan XML report from a path or file-like object."""
     if hasattr(xml_file, "read"):
         tree = read_report(xml_file)
     else:
@@ -246,9 +233,7 @@ def nmap_xml_to_json(
     *,
     hostname_resolver=None,
 ) -> dict:
-    """
-    Parse Nmap XML File report
-    """
+    """Convert Nmap or Masscan XML text or bytes into a list of host reports."""
     stream = BytesIO(xml_file) if isinstance(xml_file, bytes) else StringIO(xml_file)
     tree = read_report(stream)
     return nmap_to_json(
@@ -263,9 +248,7 @@ def nmap_to_json(
     *,
     hostname_resolver=None,
 ) -> dict:
-    """
-    This is the main parsing function
-    """
+    """Normalize a parsed report and attach host and port smart hashes."""
     root = tree.getroot() if isinstance(tree, ET.ElementTree) else tree
     masscan_report = root.get("scanner") == "masscan"
     if masscan_report:

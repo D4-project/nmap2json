@@ -1,12 +1,6 @@
 #!/usr/bin/env python3
 
-"""
-This script will convert a XLM nmap output file to somehow a usable Json
-It also calculate an unique MD5 hash based on any field except timestamps ones.
-
-It may also be used as a library, the main function is nmap_xml_to_json(xml_file)
-
-"""
+"""Convert saved Nmap and Masscan XML reports to JSON from the command line."""
 from ipaddress import ip_address
 from pathlib import Path
 import json
@@ -14,6 +8,7 @@ import argparse
 from .nmap2json import nmap_file_to_json
 
 def main(argv=None):
+    """Run the CLI and write converted reports to a file or stdout."""
     parser = argparse.ArgumentParser(description="Convert saved Nmap or Masscan XML reports to JSON")
     parser.add_argument("-i", "--input", required=True, help="Input XML report")
     parser.add_argument(

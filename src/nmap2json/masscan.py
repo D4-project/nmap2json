@@ -6,14 +6,17 @@ from xml.etree import ElementTree as ET
 
 
 def observation_time(element, field):
+    """Return the timestamp attribute as an integer, or -1 if absent."""
     value = element.get(field)
     return int(value) if value is not None else -1
 
 
 def merge_port(events):
+    """Merge status and unique service detections for one Masscan port."""
     # A native status event carries the original state/reason. A banner event
     # repeats the open state with a generic reason. Break ties deterministically.
     def status_order(event):
+        """Prefer native status events, then order by time and attributes."""
         time, port = event
         state = port.find("state")
         return (
