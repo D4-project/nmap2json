@@ -69,7 +69,7 @@ Convert a saved Nmap or Masscan XML report with the same command.
 
 ```bash
 python -m nmap2json -i nmap-report.xml -o output.json
-python -m nmap2json -i masscan-report.xml -o output.json
+python -m nmap2json -i example/samples/masscan_detection_sample.xml -o masscan.json
 ```
 
 Omit `-o` to print the JSON to stdout.

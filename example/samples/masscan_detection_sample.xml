@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- masscan v1.0 scan -->
+<nmaprun scanner="masscan" start="1777281406" version="1.0-BETA"  xmloutputversion="1.03">
+<scaninfo type="syn" protocol="tcp" />
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="25"><state state="open" reason="syn-ack" reason_ttl="42"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="43"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="21"><state state="open" reason="syn-ack" reason_ttl="42"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="443"><state state="open" reason="syn-ack" reason_ttl="41"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="42"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="143"><state state="open" reason="syn-ack" reason_ttl="42"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="110"><state state="open" reason="syn-ack" reason_ttl="42"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="993"><state state="open" reason="syn-ack" reason_ttl="41"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="995"><state state="open" reason="syn-ack" reason_ttl="42"/></port></ports></host>
+<host endtime="1777281406"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="8443"><state state="open" reason="syn-ack" reason_ttl="42"/></port></ports></host>
+<host endtime="1777281412"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="22"><state state="open" reason="response" reason_ttl="43" /><service name="ssh" banner="SSH-2.0-OpenSSH_10.0"></service></port></ports></host>
+<host endtime="1777281412"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="143"><state state="open" reason="response" reason_ttl="42" /><service name="imap" banner="* OK"></service></port></ports></host>
+<host endtime="1777281412"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="21"><state state="open" reason="response" reason_ttl="42" /><service name="ftp" banner="220-Welcome to Pure-FTPd.\x0a220-You are user number 1 of 10 allowed.\x0a220-Local time is now 11:16. Server port: 21.\x0a220-This is a private system - No anonymous login\x0a220-IPv6 connections are also welcome on this server.\x0a220 You will be disconnected after 15 minutes of inactivity.\x0a500 This security scheme is not implemented"></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="80"><state state="open" reason="response" reason_ttl="42" /><service name="http.server" banner="Caddy"></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="80"><state state="open" reason="response" reason_ttl="42" /><service name="http" banner="HTTP/1.0 308 Permanent Redirect\x0d\x0aConnection: close\x0d\x0aLocation: https:///\x0d\x0aServer: Caddy\x0d\x0aDate: Mon, 27 Apr 2026 09:16:49 GMT\x0d\x0aContent-Length: 0\x0d\x0a\x0d"></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="25"><state state="open" reason="response" reason_ttl="42" /><service name="ssl" banner=" ALERT(0x0246) "></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="25"><state state="open" reason="response" reason_ttl="42" /><service name="smtp" banner="220 smtp.trollprod.org ESMTP\x0a250-smtp.trollprod.org\x0a250-PIPELINING\x0a250-SIZE\x0a250-ETRN\x0a250-STARTTLS\x0a250-AUTH PLAIN LOGIN\x0a250-ENHANCEDSTATUSCODES\x0a250-8BITMIME\x0a250-DSN\x0a250-SMTPUTF8\x0a250 CHUNKING\x0a220 2.0.0 Ready to start TLS"></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="993"><state state="open" reason="response" reason_ttl="41" /><service name="ssl" banner=" ALERT(0x0246) "></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="110"><state state="open" reason="response" reason_ttl="42" /><service name="pop" banner="+OK Trollprod mail ready.\x0a+OK\x0aCAPA\x0aTOP\x0aUIDL\x0aRESP-CODES\x0aPIPELINING\x0aAUTH-RESP-CODE\x0aSTLS\x0aUSER\x0aSASL PLAIN\x0a.\x0a+OK Begin TLS negotiation now.\x0a"></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="110"><state state="open" reason="response" reason_ttl="42" /><service name="ssl" banner=" ALERT(0x0246) "></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="443"><state state="open" reason="response" reason_ttl="41" /><service name="ssl" banner=" ALERT(0x0246) "></service></port></ports></host>
+<host endtime="1777281418"><address addr="37.187.251.42" addrtype="ipv4"/><ports><port protocol="tcp" portid="995"><state state="open" reason="response" reason_ttl="42" /><service name="ssl" banner=" ALERT(0x0246) "></service></port></ports></host>
+<runstats>
+<finished time="1777281418" timestr="2026-04-27 11:16:58" elapsed="12" />
+<hosts up="10" down="0" total="10" />
+</runstats>
+</nmaprun>
