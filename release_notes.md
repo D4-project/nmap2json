@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2611.05
+
+- Exclude nonzero response TTL values from Nmap and Masscan host and port
+  smart hashes. Retain zero TTL in the hash and keep the original TTL value
+  in the JSON report.
+
 ## v2611.04
 
 - Add `"engine": "masscan"` only to Masscan host reports. Nmap JSON stays

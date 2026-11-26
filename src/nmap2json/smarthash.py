@@ -244,6 +244,12 @@ def anonymise_headers(input_text: str, headers: list):
 # Main function.
 
 
+def _exclude_nonzero_response_ttl(state):
+    """Omit changing hop limits while preserving the legacy zero value."""
+    if isinstance(state, dict) and state.get("reason_ttl") not in (None, 0, "0"):
+        del state["reason_ttl"]
+
+
 def master_clean(not_dedup_nmap_result: dict, scripts: list):
     """
     This function will try to remove non relevant data inside a
@@ -253,7 +259,9 @@ def master_clean(not_dedup_nmap_result: dict, scripts: list):
     """
     result = deepcopy(not_dedup_nmap_result)
 
+    _exclude_nonzero_response_ttl(result.get("status"))
     for port in result.get("ports", []):
+        _exclude_nonzero_response_ttl(port.get("state"))
         if port.get("scripts"):
             for item in port.get("scripts"):
                 to_clean = item.get("output")
